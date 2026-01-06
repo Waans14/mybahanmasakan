@@ -5,10 +5,12 @@ import Header from '../components/Header';
 import WebcamCard from '../components/WebcamCard';
 import PredictionBar from '../components/PredictionBar';
 import SplashScreen from '../components/SplashScreen';
+import { Camera, RefreshCw } from 'lucide-react';
 
 const Home = () => {
     const webcamRef = useRef(null);
     const modelRef = useRef(null);
+    const [facingMode, setFacingMode] = useState("environment");
 
     const [isLoading, setIsLoading] = useState(true);
     const [predictions, setPredictions] = useState([]);
@@ -89,7 +91,12 @@ const Home = () => {
         return () => {
             cancelAnimationFrame(animationFrameId);
         };
+
     }, [isLoading, metadata]);
+
+    const toggleCamera = () => {
+        setFacingMode(prev => prev === "user" ? "environment" : "user");
+    };
 
     return (
         <>
@@ -110,12 +117,19 @@ const Home = () => {
                                     screenshotFormat="image/jpeg"
                                     className="w-full h-full object-cover"
                                     videoConstraints={{
-                                        facingMode: "user",
+                                        facingMode: facingMode,
                                         width: 480,
                                         height: 480
                                     }}
-                                    mirrored={true}
+                                    mirrored={facingMode === "user"}
                                 />
+                                <button
+                                    onClick={toggleCamera}
+                                    className="absolute bottom-4 right-4 p-3 rounded-full bg-slate-800/80 text-emerald-400 hover:bg-slate-700/80 backdrop-blur-sm border border-slate-600/50 shadow-lg transition-all active:scale-95 z-40 group"
+                                    title="Ganti Kamera"
+                                >
+                                    <RefreshCw className="w-6 h-6 group-hover:rotate-180 transition-transform duration-500" />
+                                </button>
                             </WebcamCard>
                             <p className="mt-4 text-slate-500 text-sm">
                                 Pastikan pencahayaan yang baik untuk hasil terbaik
